@@ -27,6 +27,7 @@ git clone https://github.com/siteslave/iCafeMaterial.git
 cd iCafeMaterial
 sudo npm install
 bower install
+gulp
 ```
 
 # รันโปรแกรม
