@@ -1,6 +1,3 @@
-var jf = require('jsonfile'),
-    path = require('path'),
-    gui = require('nw.gui');
 
 var configPath = gui.App.dataPath,
     configFile = path.join(configPath, 'config.json');
