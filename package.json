@@ -1,0 +1,53 @@
+{
+  "name": "iCafeMaterial",
+  "version": "1.0.0",
+  "description": "Internet Cafe Billing System",
+  "main": "app/pages/Login.html",
+  "locale": "th_TH",
+  "single-instance": true,
+  "window": {
+    "show": true,
+    "title": "Internet Cafe Billing System",
+    "icon": "app/img/icon.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 1050,
+    "height": 640,
+    "position": "center",
+    "min_width": 1050,
+    "min_height": 640,
+    "fullscreen": false
+  },
+  "webkit": {
+    "plugin": true,
+    "java": false,
+    "page-cache": true
+  },
+  "chromium-args": "--lang=th_TH --child-clean-exit --disable-accelerated-video --disabled-application-cache --disabled-backing-store-limit",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cafe",
+    "material",
+    "nodejs"
+  ],
+  "author": "Satit Rianpit <siteslave@msn.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-imagemin": "^2.1.0",
+    "gulp-jade": "^0.10.0",
+    "gulp-jshint": "^1.9.0",
+    "gulp-less": "^2.0.1",
+    "gulp-watch": "^3.0.0",
+    "imagemin-pngquant": "^4.0.0"
+  },
+  "dependencies": {
+    "jsonfile": "^2.0.0",
+    "knex": "^0.7.3",
+    "lodash": "^2.4.1",
+    "moment": "^2.9.0",
+    "mysql": "^2.5.4"
+  }
+}

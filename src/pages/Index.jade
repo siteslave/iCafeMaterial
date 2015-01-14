@@ -1,0 +1,202 @@
+extends ../layouts/Main
+
+block scripts
+    script(src="IndexController.js")
+    script(src="IndexService.js")
+    script(src="IndexFilters.js")
+        
+block content
+    div(ng-controller="IndexController")
+        .data-table-container
+            table.data-table.data-table--has-primary.data-table--has-secondary
+                thead
+                    tr
+                        th 
+                        th หมด
+                        th ชื่อเครื่อง 
+                        th เริ่ม
+                        th สิ้นสุด
+                        th ผ่านมา
+                        th เหลือ
+                        th เป็นเงิน
+                        th จ่าย
+                        th
+                tbody
+                    tr.data-table__clickable-row(ng-repeat="c in computers")
+                        td
+                            i.icon.icon--l.icon--grey.icon--circled.mdi.mdi--desktop-windows(ng-if="!c.start_time")
+                            i.icon.icon--l.icon--green.icon--circled.mdi.mdi--desktop-windows(ng-if="c.start_time")      
+                        td
+                            i.icon.icon--l.icon--red.icon--circled.mdi.mdi--timer-off(ng-if="checkGt(c.remain) && c.service_type=='Y'") 
+                                    
+                        td
+                            span {{c.name}}
+                        td
+                            span {{c.start_time | toShortTime}}
+                        td
+                            span {{c.end_time | toShortTime}}
+                        td
+                            span {{c.start_time | getCurrent}}
+                        td
+                            span(ng-if="c.service_type=='Y'") {{c.remain | toShortTime2}}
+                            span(ng-if="c.service_type=='N' || !c.service_type") -:-
+                        td
+                            span(style="color: red;") {{c.start_time | getMoney}}
+                        td
+                            i.icon.icon--l.icon--green.icon--flat.mdi.mdi--check(ng-if="c.is_pay == 'Y'")
+                            i.icon.icon--l.icon--red.icon--flat.mdi.mdi--close(ng-if="c.is_pay == 'N'")
+                        td
+                            lx-dropdown(position="right", from-top)
+                                button.btn.btn--l.btn--black.btn--icon(lx-ripple, lx-dropdown-toggle)
+                                    i.mdi.mdi--settings-ethernet
+                                lx-dropdown-menu
+                                    ul
+                                        li(ng-show="!c.start_time")
+                                            a.dropdown-link(ng-click="showAction(c.id)") 
+                                                i.mdi.mdi--play-circle-outline &nbsp;จับเวลา
+                                        li(ng-show="c.start_time")
+                                            a.dropdown-link(ng-click="showMoney(c.id)")
+                                                i.mdi.mdi--pause-circle-outline &nbsp;คิดเงิน
+                                        li(ng-show="c.start_time && c.service_type=='Y'")
+                                            a.dropdown-link(ng-click="addTime(c.id, c.name)")
+                                                i.mdi.mdi--exposure-plus-1 &nbsp;ต่อเวลา
+                                        li(ng-show="c.start_time", ng-click="showChangeComputer(c.id, c.name)")
+                                            a.dropdown-link
+                                                i.mdi.mdi--sync &nbsp;ย้ายเครื่อง    
+                                        li.dropdown-divider(ng-show="c.start_time")
+                                        li(ng-show="c.start_time")
+                                            a.dropdown-link(ng-click="confirmCancel(c.id)")
+                                                i.mdi.mdi--highlight-remove &nbsp;ยกเลิก
+        lx-dialog#mdlAction.dialog.dialog--l(onclose="closeAction()")
+            .dialog__header
+                .toolbar.bgc-light-blue-500
+                    span.toolbar__label.tc-white.fs-headline
+                        | จับเวลาการเล่น
+                    .toolbar__right
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dialog-close)
+                            i.mdi.mdi--clear
+            .dialog__content
+                .card
+                    .card__content
+                        .grid
+                            .grid__col6
+                                lx-text-field(label="ชื่อลูกค้า", error="!playerName.length")
+                                    input(type="text", ng-model="playerName")
+                        .grid
+                            .grid__col12     
+                                .radio-group.mt
+                                    .grid
+                                        .grid__col6
+                                            .switch.mt
+                                                input(type="checkbox", name="serviceType", 
+                                                    ng-model="serviceType", 
+                                                    ng-checked="serviceType")#serviceType.switch__input
+                                                label(for="serviceType").switch__label เล่นจับเวลา
+                                                span.switch__help เล่นตามจำนวนเงิน หรือ ตามจำนวนชั่วโมง
+                                
+                                        .grid__col3(ng-show="serviceType")
+                                            lx-text-field(label="จำนวนเงินที่เล่น")
+                                                input(type="text", name="money", ng-model="money")
+                            
+                                            input(type="checkbox", ng-model="isPay", 
+                                                ng-checked="false", 
+                                                name="pay")#pay.checkbox__input
+                                            label(for="pay").checkbox__label จ่ายเงินแล้ว
+                                    
+                                      
+            .dialog__actions
+                button(ng-click="saveActivity()", lx-ripple).btn.btn--l.btn--green.btn--raised
+                    | เริ่มจับเวลา           
+                | &nbsp;
+                button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
+                    | ปิดหน้าต่าง
+
+        lx-dialog#mdlMoney.dialog.dialog--s(onclose="closeMoney()")
+            .dialog__header
+                .toolbar.bgc-light-blue-500
+                    span.toolbar__label.tc-white.fs-headline
+                        | สรุปการให้บริการ
+                    .toolbar__right
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dialog-close)
+                            i.mdi.mdi--clear
+            .dialog__content
+                .card
+                    .card__content
+                        .grid.mt
+                            .grid__col12
+                                form
+                                    lx-text-field(label="ชื่อเครื่อง", fixed-label="false")
+                                        input(type="text", ng-model="computerName")
+                                    lx-text-field(label="เวลาที่ใช้ไป (HH:MM)", fixed-label="false")
+                                        input(type="text", ng-model="totalTime")
+                                    lx-text-field(label="จำนวนเงิน", fixed-label="false")
+                                        input(type="text", ng-model="totalMoney")
+                                        
+                                    lx-text-field(label="จำนวนเงินที่ต้องจ่าย (จ่ายจริง)", fixed-label="false", error="true")
+                                        input(type="text", ng-model="totalTrueMoney")
+                                    
+                                    
+                                      
+            .dialog__actions
+                button.btn.btn--l.btn--green.btn--raised(lx-ripple, ng-click="doSaveMoney()")
+                    | เก็บเงิน
+                | &nbsp;
+                button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
+                    | ปิดหน้าต่าง
+
+
+        lx-dialog#mdlAddTime.dialog.dialog--s(onclose="closeAddTime()")
+            .dialog__header
+                .toolbar.bgc-light-blue-500
+                    span.toolbar__label.tc-white.fs-headline
+                        | เพิ่มเวลา
+                    .toolbar__right
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dialog-close)
+                            i.mdi.mdi--clear
+            .dialog__content
+                .card
+                    .card__content
+                        .grid.mt
+                            .grid__col12
+                                form
+                                    lx-text-field(label="ชื่อเครื่อง", fixed-label="false")
+                                        input(type="text", ng-model="computerName")
+                                    lx-text-field(label="เวลาที่เพิ่ม (HH:MM)", fixed-label="false")
+                                        input(type="time", ng-model="newTime")
+                                      
+            .dialog__actions
+                button.btn.btn--l.btn--green.btn--raised(lx-ripple, ng-click="doUpdateTime()")
+                    | เพิ่มเวลา
+                | &nbsp;
+                button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
+                    | ปิดหน้าต่าง
+
+        lx-dialog#mdlChangeComputer.dialog.dialog--s(onclose="closeChangeComputer()")
+            .dialog__header
+                .toolbar.bgc-light-blue-500
+                    span.toolbar__label.tc-white.fs-headline
+                        | ย้ายเครื่อง
+                    .toolbar__right
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dialog-close)
+                            i.mdi.mdi--clear
+            .dialog__content
+                .card
+                    .card__content
+                        .grid.mt
+                            .grid__col12
+                                form
+                                    lx-text-field(label="ชื่อเครื่องปัจจุบัน", fixed-label="false")
+                                        input(type="text", ng-model="computerName")
+                                    lx-select(ng-model="selectedComputer", placeholder="เลือกเครื่องที่ต้องการย้าย", choices="computersOffline", floating-label)
+                                        lx-select-selected
+                                            | {{setComputerId($selected.id)}}
+                                            | {{$selected.name}}
+                                        lx-select-choices
+                                            | {{$choice.name}}
+                                      
+            .dialog__actions
+                button.btn.btn--l.btn--green.btn--raised(lx-ripple, ng-click="doChangeComputer()")
+                    | เปลี่ยนเครื่อง
+                | &nbsp;
+                button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
+                    | ปิดหน้าต่าง

@@ -1,0 +1,47 @@
+extends ../layouts/Main
+
+block scripts
+    //- script(src="Settings.js")
+    script(src="SettingsController.js")
+    script(src="SettingsService.js")
+
+block content
+    span.fs-display-1    
+        i.icon.icon--l.icon--grey.icon--circled.mdi.mdi--settings 
+        | &nbsp;Settings
+    br
+    
+    form(name="frmSetting", ng-controller="SettingsController")
+        .grid
+            .grid__col6
+                lx-text-field(label="IP address", error="!config.host.length")
+                    input(type="text", ng-model="config.host", ng-required="true")
+                ul.form-error(ng-if="!config.host.length")
+                    li Please enter server name.
+            .grid__col2
+                lx-text-field(label="Port")
+                    input(type="number", ng-model="config.port", ng-required="true")
+            .grid__col4
+                lx-text-field(label="Database name", error="!config.database.length")
+                    input(type="text", ng-model="config.database", ng-required="true")
+                ul.form-error(ng-if="!config.database.length")
+                    li Please enter database name.
+        .grid
+            .grid__col6
+                lx-text-field(label="Username", error="!config.user.length")
+                    input(type="text", ng-model="config.user", ng-required="true")
+                ul.form-error(ng-if="!config.user.length")
+                    li Please enter database username.
+            .grid__col6
+                lx-text-field(label="Password", error="!config.password.length")
+                    input(type="password", ng-model="config.password", ng-required="true")
+                ul.form-error(ng-if="!config.password.length")
+                    li Please enter database password.
+        br
+        br
+            
+        button.btn.btn--l.btn--green.btn--raised(lx-ripple, ng-disabled="frmSetting.$invalid", ng-click="saveConfig()")
+            | Save
+        | &nbsp;
+        button.btn.btn--l.btn--red.btn--raised(lx-ripple)
+            | Cancel

@@ -1,0 +1,73 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+        title Internet Cafe Billing System
+        
+        link(rel="stylesheet", href="../../vendor/lumx/dist/css/lumx.css")
+        
+        
+    body(ng-app="App")
+        
+        //-.container
+        .grid
+            .grid__col12
+                .toolbar.bgc-indigo-500
+                    .toolbar__left.mr
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple)
+                            i.mdi.mdi--desktop-windows
+                    span(style="color: #fff;").toolbar__label.fs-title
+                        | Internet Cafe Billing System
+                    
+                    .toolbar__right
+                        lx-dropdown(position="right", from-top)
+                            
+                            button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dropdown-toggle)
+                                i.mdi.mdi--more-vert
+                            
+                            lx-dropdown-menu
+                                ul
+                                    li
+                                        a.dropdown-link.dropdown-link--is-header Settings
+                                        a(href="../pages/Settings.html").dropdown-link กำหนดค่าการเชื่อมต่อ
+                                        
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, onclick="location.reload();")
+                            i.mdi.mdi--refresh
+        .grid
+            .grid__col3
+                ul.list
+                    li.list-row.list-row--has-primary.list-row--has-secondary
+                        .list-primary-tile
+                            a(href="../pages/Login.html")
+                                i.icon.icon--l.icon--blue.icon--circled.mdi.mdi--desktop-windows
+                        .list-content-tile.list-content-tile--two-lines
+                            strong Login
+                            span ล๊อกอินเข้าสู่ระบบ
+                    li.list-row.list-row--has-primary.list-row--has-secondary
+                        .list-primary-tile
+                            a(href="../pages/Settings.html")
+                                i.icon.icon--l.icon--teal.icon--circled.mdi.mdi--settings
+                        .list-content-tile.list-content-tile--two-lines
+                            strong Settings
+                            span กำหนดค่าการใช้งาน
+            .grid__col9
+                .card
+                    .card__content
+                        block content
+        
+        
+        //- Resourceses
+        script(src="../../vendor/jquery/dist/jquery.min.js")
+        script(src="../../vendor/velocity/velocity.min.js")
+        script(src="../../vendor/moment/min/moment-with-locales.min.js")
+        script(src="../../vendor/angular/angular.js")
+        script(src="../../vendor/lumx/dist/js/lumx.min.js")
+            
+        //- Main application script    
+        script(src="../app.js")
+        script(src="../common/Common.js")
+        
+        block scripts
+    

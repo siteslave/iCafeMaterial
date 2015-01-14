@@ -1,0 +1,58 @@
+extends ../layouts/Main
+
+block scripts
+    script(src="ReportsController.js")
+    script(src="ReportsService.js")
+    script(src="IndexFilters.js")
+        
+block content
+    div(ng-controller="ReportsController")
+        .mt
+            //- (links-tc="light", links-bgc="light-blue-500", indicator="yellow-500", no-divider="true", z-depth="1")
+            lx-tabs
+                lx-tab(heading="สรุปรายได้")
+                    .grid
+                        .grid__col3
+                            lx-date-picker(model="startDate", label="ตั้งแต่วันที่")
+                        .grid__col3
+                            lx-date-picker(model="endDate", label="ถึงวันที่")
+                        .grid__col3
+                            br
+                            button.btn.btn--m.btn--green.btn--raised(lx-ripple, ng-click="getTotal()")
+                                | แสดงข้อมูล
+                    .grid
+                        .grid__col12
+                            .data-table-container
+                                table.data-table
+                                    thead
+                                        tr
+                                            th วันที่
+                                            th เครื่อง
+                                            th ลูกค้า
+                                            th ประเภท
+                                            th เริ่ม
+                                            th สิ้นสุด
+                                            th เวลา
+                                            th เป็นเงิน
+                                            th เก็บจริง
+                                    tbody
+                                        tr.data-table__clickable-row(ng-repeat="t in transactions")
+                                            td {{t.service_date}}
+                                            td {{t.name}}
+                                            td {{t.player_name}}
+                                            td {{t.service_type}}
+                                            td {{t.start_time | toShortTime}}
+                                            td {{t.end_time | toShortTime}}
+                                            td {{t.remain}}
+                                            td {{t.money | number}}
+                                            td {{t.true_money | number}}
+                                    
+                                        tr
+                                            td(colspan="7") 
+                                                strong รวม
+                                            td 
+                                                strong {{totalMoney | number}}
+                                            td
+                                                strong {{totalTrueMoney | number}}
+                lx-tab(heading="สรุปรายได้แยกรายเครื่อง")
+                    p สรุปรายได้แยกรายเครื่อง

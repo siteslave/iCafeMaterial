@@ -1,0 +1,22 @@
+extends ../layouts/Login
+
+block scripts
+    script(src="LoginController.js")
+    script(src="LoginService.js")
+        
+block content
+    form(name="frmLogin", ng-controller="LoginController")
+        .fs-headline
+            i.icon.icon--l.icon--green.icon--circled.mdi.mdi--verified-user
+            | &nbsp;Please login
+        .grid
+            .grid__col4
+                lx-text-field(label="Username")
+                    input(type="text", ng-model="username", ng-required="true")
+            .grid__col4
+                lx-text-field(label="Password")
+                    input(type="password", ng-model="password", ng-required="true")
+            .grid__col4
+                br
+                button.btn.btn--l.btn--blue.btn--raised(lx-ripple, ng-click="doLogin()", ng-disabled="frmLogin.$invalid")
+                    | Login
