@@ -315,6 +315,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
                         LxNotificationService.success('ยกเลิกรายการเสร็จเรียบร้อยแล้ว');
                         $scope.getComputerList();
                     }, function (err) {
+                        console.log(err);
                         LxNotificationService.error('เกิดข้อผิดพลาด กรุณาดู Log');
                     });
             }
