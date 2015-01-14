@@ -55,7 +55,7 @@ block content
                                             a.dropdown-link(ng-click="showAction(c.id)") 
                                                 i.mdi.mdi--play-circle-outline &nbsp;จับเวลา
                                         li(ng-show="c.start_time")
-                                            a.dropdown-link(ng-click="showMoney(c.id)")
+                                            a.dropdown-link(ng-click="showMoney(c.id, c.name)")
                                                 i.mdi.mdi--pause-circle-outline &nbsp;คิดเงิน
                                         li(ng-show="c.start_time && c.service_type=='Y'")
                                             a.dropdown-link(ng-click="addTime(c.id, c.name)")

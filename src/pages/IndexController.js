@@ -1,8 +1,5 @@
 App.controller('IndexController', function ($scope, IndexService, Common, $timeout, LxDialogService, LxNotificationService) {
 
-    var moment = require('moment'),
-        _ = require('lodash');
-
     $scope.computers = [];
     $scope.serviceType = true;
 
@@ -14,9 +11,31 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
     var minutePerBath = 60/15;
 
     $scope.getComputerList = function () {
+        // clear all computers list
+        $scope.computers = [];
+
         IndexService.getComputerList()
             .then(function (rows) {
-                $scope.computers = rows;
+                var totalEnd = 0;
+                _.forEach(rows, function (v) {
+                    var obj = {};
+                    obj.id = v.id;
+                    obj.name = v.name;
+                    obj.start_time = v.start_time;
+                    obj.end_time = v.end_time;
+                    obj.service_type = v.service_type;
+                    obj.remain = v.remain;
+                    obj.is_pay = v.is_pay;
+
+                    if ($scope.checkGt(v.remain) && v.service_type=='Y') {
+                        totalEnd++;
+                    }
+
+                    $scope.computers.push(obj);
+                });
+
+                win.setBadgeLabel(totalEnd);
+
             }, function (err) {
                 console.log(err);
             });
@@ -47,7 +66,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
 
     // Show action
     $scope.showAction = function (computerId) {
-
+        $scope.playerName = 'GUEST';
         $scope.computerId = computerId;
         LxDialogService.open('mdlAction');
 
@@ -127,7 +146,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
     };
 
     // Finished
-    $scope.showMoney = function (computerId) {
+    $scope.showMoney = function (computerId, computerName) {
 
         // Get service detail
         $scope.totalMoney = 0;
@@ -137,7 +156,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
             .then(function (rows) {
 
                 $scope.computerId = computerId;
-                $scope.computerName = rows.name;
+                $scope.computerName = computerName;
                 $scope.totalTime = moment(rows.total_time, 'HH:mm:ss').format('HH:mm');
 
                 var h = moment.utc(moment().diff(moment(rows.start_time, "YYYY-MM-DD HH:mm:ss"))).format("H");
