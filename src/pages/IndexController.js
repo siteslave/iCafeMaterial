@@ -297,7 +297,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
     $scope.checkGt = function (t) {
         if (t) {
             var a = t.split(':');
-            if (a[0].charAt(0) == '-' || (a[0] === 0 && a[1] === 0)) {
+            if (a[0].charAt(0) == '-' || (a[0] == '00' && a[1] == '00')) {
                 return true;
             } else {
                 return false;
