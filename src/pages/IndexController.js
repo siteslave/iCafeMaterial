@@ -94,9 +94,17 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
         // - serviceType: true = limit time, false = unlimit time
         data.serviceType = $scope.serviceType ? 'Y' : 'N';
         // - money
-        data.money = $scope.money ? !isNaN($scope.money) ? $scope.money : 0 : 0;
-        // - isPay
-        data.isPay = $scope.isPay ? 'Y' : 'N';
+
+        if (data.serviceType == 'N') {
+            data.isPay = 'N';
+            data.money = 0;
+        } else {
+            data.money = $scope.money ? !isNaN($scope.money) ? $scope.money : 0 : 0;
+            // - isPay
+            data.isPay = $scope.isPay ? 'Y' : 'N';
+        }
+
+        
         // - computerId
         data.computerId = $scope.computerId;
         // - Start date time
@@ -339,6 +347,37 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
                     });
             }
         });
+    };
+
+
+    // check current status
+    $scope.checkCurrentStatus = function(data) {
+        /*
+
+                        td
+                            i.icon.icon--l.icon--grey.icon--circled.mdi.mdi--desktop-windows(ng-if="!c.start_time")
+                            i.icon.icon--l.icon--green.icon--circled.mdi.mdi--desktop-windows(ng-if="c.start_time")      
+                        td
+        
+                            i.icon.icon--l.icon--red.icon--circled.mdi.mdi--timer-off(ng-if="checkGt(c.remain) && c.service_type=='Y'") 
+        
+        0 = Empty
+        1 = Not finished
+        2 = Finished                   
+        */
+
+
+        if (data.service_type == 'Y') {
+            if ($scope.checkGt(data.remain)) {
+                return 2; // Finished
+            } else {
+                return 1;
+            }
+        } else if (data.service_type == 'N') {
+            return 1;
+        } else {
+            return 0;
+        }
     };
 
 });

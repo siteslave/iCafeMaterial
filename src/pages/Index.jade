@@ -12,7 +12,6 @@ block content
                 thead
                     tr
                         th 
-                        th หมด
                         th ชื่อเครื่อง 
                         th เริ่ม
                         th สิ้นสุด
@@ -24,11 +23,7 @@ block content
                 tbody
                     tr.data-table__clickable-row(ng-repeat="c in computers")
                         td
-                            i.icon.icon--l.icon--grey.icon--circled.mdi.mdi--desktop-windows(ng-if="!c.start_time")
-                            i.icon.icon--l.icon--green.icon--circled.mdi.mdi--desktop-windows(ng-if="c.start_time")      
-                        td
-                            i.icon.icon--l.icon--red.icon--circled.mdi.mdi--timer-off(ng-if="checkGt(c.remain) && c.service_type=='Y'") 
-                                    
+                            i.icon.icon--l.icon--circled.mdi.mdi--desktop-windows(ng-class="{'icon--grey': checkCurrentStatus(c) == 0, 'icon--green': checkCurrentStatus(c) == 1, 'icon--red': checkCurrentStatus(c) == 2}")   
                         td
                             span {{c.name}}
                         td

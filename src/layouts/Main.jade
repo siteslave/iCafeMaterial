@@ -21,7 +21,7 @@ html(lang="en")
                     span(style="color: #fff;").toolbar__label.fs-title
                         | Internet Cafe Billing System
                     
-                    .toolbar__right
+                    .toolbar__right(ng-controller="MainController")
                         lx-dropdown(position="right", from-top)
                             
                             button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dropdown-toggle)
@@ -35,6 +35,8 @@ html(lang="en")
                                         
                         button.btn.btn--l.btn--white.btn--icon(lx-ripple, onclick="location.reload();")
                             i.mdi.mdi--refresh
+                         button.btn.btn--l.btn--white.btn--icon(lx-ripple, ng-click="showDebugTools()")
+                                i.mdi.mdi--android
         .grid
             .grid__col3
                 ul.list

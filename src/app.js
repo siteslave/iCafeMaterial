@@ -28,3 +28,9 @@ if (!isExist) {
 }
 
 App = angular.module('App', ['lumx']);
+
+App.controller('MainController', function($scope) {
+    $scope.showDebugTools = function() {
+        win.showDevTools();
+    };
+});
