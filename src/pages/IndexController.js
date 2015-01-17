@@ -317,6 +317,7 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
     $scope.closeAction = function () {
         $scope.playerName = null;
         $scope.serviceType = true;
+        $scope.computerId = null;
         $scope.money = 0;
         $scope.isPay = false;
     };
@@ -353,20 +354,10 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
     // check current status
     $scope.checkCurrentStatus = function(data) {
         /*
-
-                        td
-                            i.icon.icon--l.icon--grey.icon--circled.mdi.mdi--desktop-windows(ng-if="!c.start_time")
-                            i.icon.icon--l.icon--green.icon--circled.mdi.mdi--desktop-windows(ng-if="c.start_time")      
-                        td
-        
-                            i.icon.icon--l.icon--red.icon--circled.mdi.mdi--timer-off(ng-if="checkGt(c.remain) && c.service_type=='Y'") 
-        
         0 = Empty
         1 = Not finished
         2 = Finished                   
         */
-
-
         if (data.service_type == 'Y') {
             if ($scope.checkGt(data.remain)) {
                 return 2; // Finished

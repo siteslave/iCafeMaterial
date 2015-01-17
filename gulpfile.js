@@ -2,9 +2,7 @@ var gulp = require('gulp'),
 jade = require('gulp-jade'),
 jshint = require('gulp-jshint'),
 watch = require('gulp-watch'),
-less = require('gulp-less'),
-imagemin = require('gulp-imagemin'),
-pngquant = require('imagemin-pngquant');
+less = require('gulp-less');
 
 /** Jade **/
 gulp.task('jade', function () {
@@ -25,16 +23,6 @@ gulp.task('less', function () {
     return gulp.src('./src/**/*.less')
     .pipe(less())
     .pipe(gulp.dest('./app'));
-});
-
-gulp.task('imagemin', function () {
-    return gulp.src('./src/images/**/*')
-    .pipe(imagemin({
-        progressive: true,
-        svgoPlugins: [{removeViewBox: false}],
-        use: [pngquant()]
-    }))
-    .pipe(gulp.dest('./app/images'));
 });
 
 /** Watch **/
