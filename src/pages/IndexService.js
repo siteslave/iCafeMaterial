@@ -74,6 +74,27 @@ App.factory('IndexService', function ($q, Common) {
             return q.promise;
         },
 
+        updateActivity: function (data) {
+            var q = $q.defer();
+
+            db('activity')
+                .update({
+                    start_time: data.startTime,
+                    end_time: data.endTime,
+                    service_type: data.serviceType,
+                    player_name: data.playerName,
+                    money: data.money,
+                    is_pay: data.isPay
+                })
+                .where('computer_id', data.computerId)
+                .exec(function (err) {
+                    if (err) q.reject(err);
+                    else q.resolve();
+                });
+
+            return q.promise;
+        },
+
         getTotalService: function (computerId) {
             var q = $q.defer();
 
@@ -102,6 +123,21 @@ App.factory('IndexService', function ($q, Common) {
                     if (err) q.reject(err);
                     else q.resolve(rows[0]);
                 });
+            return q.promise;
+        },
+
+        getServiceEditDetail: function(computerId) {
+            var q = $q.defer();
+
+            db('activity as a')
+                .select('a.*', 'c.id', 'c.name')
+                .leftJoin('computers as c', 'c.id', 'a.computer_id')
+                .where('a.computer_id', computerId)
+                .exec(function(err, rows) {
+                    if (err) q.reject(err);
+                    else q.resolve(rows[0]);
+                });
+
             return q.promise;
         },
 

@@ -69,6 +69,79 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
         $scope.playerName = 'GUEST';
         $scope.computerId = computerId;
         LxDialogService.open('mdlAction');
+    };
+
+    // Show edit
+    $scope.showEdit = function (computerId) {
+        $scope.computerId = computerId;
+        // Get detail
+        IndexService.getServiceEditDetail(computerId)
+            .then(function(data) {
+                $scope.editPlayerName = data.player_name;
+                $scope.editMoney = data.money;
+                $scope.editServiceType = data.service_type == 'Y' ? true : false;
+                $scope.editIsPay = data.is_pay == 'Y' ? true : false;
+                $scope.editStartTime = data.start_time;
+                $scope.editEndTime = data.end_time;
+
+                LxDialogService.open('mdlEdit');
+            }, function(err) {
+                console.log(err);
+                LxNotificationService.error('เกิดข้อผิดพลาด กรุณาดู log file');
+            });
+    };
+
+    $scope.saveEdit = function () {
+
+        //LxNotificationService.info('Save success');
+        var data = {};
+        // - playerName
+        data.playerName = $scope.editPlayerName;
+        // - serviceType: true = limit time, false = unlimit time
+        data.serviceType = $scope.editServiceType ? 'Y' : 'N';
+        // - money
+
+        if (data.serviceType == 'N') {
+            data.isPay = 'N';
+            data.money = 0;
+        } else {
+            data.money = $scope.editMoney ? !isNaN($scope.editMoney) ? $scope.editMoney : 0 : 0;
+            // - isPay
+            data.isPay = $scope.editIsPay ? 'Y' : 'N';
+        }
+
+        
+        // - computerId
+        data.computerId = $scope.computerId;
+        // - Start date time
+        data.startTime = moment($scope.editStartTime).format('YYYY-MM-DD HH:mm:ss');
+
+        // - End date time
+        if ($scope.editServiceType) {
+            var allMinute = Math.round((data.money * 60) / bathPerHour);
+
+            data.endTime = moment($scope.editStartTime).add(allMinute, 'm').format('YYYY-MM-DD HH:mm:ss');
+        } else {
+            data.endTime = '0000-00-00 00:00:00';
+        }
+
+        if ($scope.editServiceType && isNaN($scope.editMoney)) {
+            LxNotificationService.error('กรุณาระบุจำนวนเงินเป็นตัวเลข');
+        } else if(!$scope.editPlayerName) {
+            LxNotificationService.error('กรุณาระบุชื่อผู้เล่น');
+        } else {
+
+            //console.log(data);
+            // check computer is ready
+            IndexService.updateActivity(data)
+                .then(function() {
+                    LxNotificationService.success('ปรับปรุงรายการเสร็จเรียบร้อยแล้ว');
+                    LxDialogService.close('mdlEdit');
+                    $scope.getComputerList();
+                }, function(err) {
+                    LxNotificationService.error('เกิดข้อผิดพลาด กรุณาดู Log');
+                });
+        }
 
     };
 
@@ -273,22 +346,17 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
 
     $scope.doChangeComputer = function () {
 
-        //$scope.oldComputerId
-        //$scope.computerId
+        IndexService.changeComputer($scope.oldComputerId, $scope.computerId)
+            .then(function () {
+                LxNotificationService.success('เปลี่ยนเครื่องเสร็จเรียบร้อย');
+                LxDialogService.close('mdlChangeComputer');
 
-        if (!$scope.computerId) {
-            LxNotificationService.error('กรุณาระบุเครื่องปลายทางที่ต้องการย้าย');
-        } else {
-            IndexService.changeComputer($scope.oldComputerId, $scope.computerId)
-                .then(function () {
-                    LxNotificationService.success('เปลี่ยนเครื่องเสร็จเรียบร้อย');
-                    $scope.getComputerList();
-                    LxDialogService.close('mdlChangeComputer');
-                }, function (err) {
-                    console.log(err);
-                    LxNotificationService.error('เกิดข้อผิดพลาดกรุณาดูที่ log');
-                });
-        }
+                win.reload();
+
+            }, function (err) {
+                console.log(err);
+                LxNotificationService.error('เกิดข้อผิดพลาดกรุณาดูที่ log');
+            });
     };
 
     $scope.setComputerId = function (id) {
@@ -304,6 +372,15 @@ App.controller('IndexController', function ($scope, IndexService, Common, $timeo
         $scope.computerId = null;
         $scope.computerName = null;
         $scope.newTime = null;
+    };
+
+    $scope.closeEdit = function() {
+        $scope.computerId = null;
+        $scope.editPlayerName = null;
+        $scope.editMoney = 0;
+        $scope.editServiceType = false;
+        $scope.editStartTime = null;
+        $scope.editIsPay = false;
     };
 
     $scope.closeMoney = function () {

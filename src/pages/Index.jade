@@ -60,6 +60,9 @@ block content
                                                 i.mdi.mdi--sync &nbsp;ย้ายเครื่อง    
                                         li.dropdown-divider(ng-show="c.start_time")
                                         li(ng-show="c.start_time")
+                                            a.dropdown-link(ng-click="showEdit(c.id)")
+                                                i.mdi.mdi--edit &nbsp;แก้ไข
+                                        li(ng-show="c.start_time")
                                             a.dropdown-link(ng-click="confirmCancel(c.id)")
                                                 i.mdi.mdi--highlight-remove &nbsp;ยกเลิก
         lx-dialog#mdlAction.dialog.dialog--l(onclose="closeAction()")
@@ -181,7 +184,7 @@ block content
                             .grid__col12
                                 form
                                     lx-text-field(label="ชื่อเครื่องปัจจุบัน", fixed-label="false")
-                                        input(type="text", ng-model="computerName")
+                                        input(type="text", ng-model="computerName", disabled)
                                     lx-select(ng-model="selectedComputer", placeholder="เลือกเครื่องที่ต้องการย้าย", choices="computersOffline", floating-label)
                                         lx-select-selected
                                             | {{setComputerId($selected.id)}}
@@ -191,7 +194,54 @@ block content
                                       
             .dialog__actions
                 button.btn.btn--l.btn--green.btn--raised(lx-ripple, ng-click="doChangeComputer()")
-                    | เปลี่ยนเครื่อง
+                    | ย้ายเครื่อง
+                | &nbsp;
+                button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
+                    | ปิดหน้าต่าง
+
+        lx-dialog#mdlEdit.dialog.dialog--l(onclose="closeEdit()")
+            .dialog__header
+                .toolbar.bgc-light-blue-500
+                    span.toolbar__label.tc-white.fs-headline
+                        | แก้ไขข้อมูลการเล่น
+                    .toolbar__right
+                        button.btn.btn--l.btn--white.btn--icon(lx-ripple, lx-dialog-close)
+                            i.mdi.mdi--clear
+            .dialog__content
+                .card
+                    .card__content
+                        .grid
+                            .grid__col6
+                                lx-text-field(label="ชื่อลูกค้า", error="!editPlayerName.length")
+                                    input(type="text", ng-model="editPlayerName")
+                        .grid
+                            .grid__col12     
+                                .radio-group.mt
+                                    .grid
+                                        .grid__col6
+                                            .switch.mt
+                                                input(type="checkbox", name="editServiceType", 
+                                                    ng-model="editServiceType", 
+                                                    ng-checked="editServiceType")#editServiceType.switch__input
+                                                label(for="editServiceType").switch__label เล่นจับเวลา
+                                                span.switch__help เล่นตามจำนวนเงิน หรือ ตามจำนวนชั่วโมง
+                                
+                                        .grid__col3(ng-show="editServiceType")
+                                            lx-text-field(label="จำนวนเงินที่เล่น")
+                                                input(type="text", name="editMoney", ng-model="editMoney")
+                                            input(type="checkbox", ng-model="editIsPay", 
+                                                ng-checked="editIsPay", 
+                                                name="editIsPay")#editIsPay.checkbox__input
+                                            label(for="editIsPay").checkbox__label จ่ายเงินแล้ว
+                                    .grid
+                                        .grid__col4
+                                            lx-text-field(label="แก้ไขเวลาเริ่ม (HH:MM:SS)")
+                                                input(type="time", name="editStartTime", ng-model="editStartTime")
+                                    
+                                      
+            .dialog__actions
+                button(ng-click="saveEdit()", lx-ripple).btn.btn--l.btn--green.btn--raised
+                    | ปรับปรุง           
                 | &nbsp;
                 button.btn.btn--l.btn--red.btn--raised(lx-ripple, lx-dialog-close)
                     | ปิดหน้าต่าง
